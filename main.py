@@ -71,9 +71,85 @@ def create_tables():
         cursor.close()
         connection.close()
 
+# product function to add, update, delete, show all and save database or csv file
+def Products():
+    def add(): # nested function add
+        connection = get_connection()
+        if not connection: # check connection
+            return
+        
+        try: # error headling
+            cursor = connection.cursor()
+            p_id = int(input("Enter Product id: "))
 
-def Product():
-    pass
+            # check if product existe in database
+            cursor.execute(
+                    "SELECT product_id FROM products WHERE product_id = %s",(p_id,))
+            if cursor.fetchone():
+                print("❌ Product with this id already existe! ")
+                return
+            # input Data
+            name = input("Enter Product Name: ").strip().title()
+            category = input("Enter Product Category: ").strip().title()
+            description = input("Enter Product Description: ").strip().title()
+            unit_price = int(input("Enter Per/Unit price: "))
+            sku = input("Enter SKU code: ").strip().title()
+
+            # Insert Data 
+            cursor.execute('''INSERT INTO products (product_id, name, category, description, unit_price, sku)
+                            VALUES (%s, %s, %s, %s, %s, %s)''',(p_id, name, category, description, unit_price, sku))
+
+            connection.commit()
+            print(f"✅ Product: {name} (Product id {p_id} Add Successfully.)")
+
+        except Error as e:
+            print(f"❌ Error Adding Product: {e}")
+        finally:
+            cursor.close()
+            connection.close()
+
+    def update():
+        connection = get_connection()
+        if not connection:
+            return
+        try:
+            cursor = connection.cursor()
+            p_id = int(input("Enter Product id to Update: "))
+
+            # check if product exists in database
+            cursor.execute("SELECT product_id FROM products WHERE product_id = %s",(p_id,))
+            if not cursor.fetchone():
+                print("❌ Pruduct with this id already existe!")
+                return
+            name = input("Enter New Product Name (or press Enter to keep current): ").strip().title()
+            category = input("Enter New Product Category (or press Enter to keep current): ").strip().title()
+            description = input("Enter New Product Description (or press Enter to keep current): ").strip().title()
+            unit_price = (input("Enter New Per/Unit price (or press Enter to keep current): "))
+            sku = input("Enter new SKU code (or press Enter to keep current): ").strip().title()
+
+            if name:
+                cursor.execute("UPDATE products SET name = %s WHERE product_id = %s",(name, p_id))
+            if category:
+                cursor.execute("UPDATE products SET category = %s WHERE product_id = %s",(category, p_id))
+            if description:
+                cursor.execute("UPDATE products SET discription = %s WHERE product_id = %s",(description, p_id))
+            if unit_price:
+                cursor.execute("UPDATE products SET unit_price = %s WHERE product_id = %s",(unit_price, p_id))
+            if sku:
+                cursor.execute("UPDATE products SET sku = %s WHERE product_id = %s",(sku, p_id))
+
+            connection.commit()
+            print(f"✅ Product at this id({p_id}) Updated Successfully.")
+
+        except Error as e:
+            print(f"❌ Error in Adding Product: {e}")
+        finally:
+            cursor.close()
+            connection.close()
+
+
+    
+
 
 def Inventory():
     pass
