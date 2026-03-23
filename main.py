@@ -1,7 +1,10 @@
 import mysql.connector              # cannect sql database 
 from mysql.connector import Error   
 import pandas as pd  
-import csv               
+import csv            
+import os   
+
+CSV_FILE = "ims_data.csv"
 
 # Create function for database connection
 def get_connection():
@@ -147,7 +150,30 @@ def Products():
             cursor.close()
             connection.close()
 
+    def delete():
+        connection = get_connection()
+        if not connection:
+            print("Error connection not found")
+            return
+        try:
+            cursor = connection.cursor()
+            p_id = int(input("Enter Product id: "))
 
+            # check if product id existe
+            cursor.execute("SELECT product_id FROM products WHERE product_id = %s",(p_id,))
+            if not cursor.fetchone():
+                print("❌ Pruduct with this id not existe!")
+                return
+            
+            cursor.execute("DELETE FROM products WHERE product_id = %s",(p_id,))
+            connection.commit()
+            print(f"✅ Product with this id{p_id} Delete Successfully!")
+        except Error as e:
+            print(f"❌Error: deleting product is {e}")
+        finally:
+            cursor.close()
+            connection.close()
+    
     
 
 
