@@ -135,7 +135,7 @@ def Products():
             if category:
                 cursor.execute("UPDATE products SET category = %s WHERE product_id = %s",(category, p_id))
             if description:
-                cursor.execute("UPDATE products SET discription = %s WHERE product_id = %s",(description, p_id))
+                cursor.execute("UPDATE products SET description = %s WHERE product_id = %s",(description, p_id))
             if unit_price:
                 cursor.execute("UPDATE products SET unit_price = %s WHERE product_id = %s",(unit_price, p_id))
             if sku:
@@ -173,12 +173,103 @@ def Products():
         finally:
             cursor.close()
             connection.close()
+
+    def search_products():
+        connection = get_connection()
+        if not connection:
+            return
+        try:
+            cursor = connection.cursor()
+            p_id = int(input("Enter Product id for search: "))
+            
+            # Check if product id existe in database
+            cursor.execute("SELECT product_id FROM products WHERE product_id = %s",(p_id,))
+            if not cursor.fetchone():
+                print("❌This product id not Existe in database")
+                return
+            cursor.execute("SELECT * FROM products WHERE product_id = %s",(p_id,))
+            result = cursor.fetchall()
+            if result:
+                print(f"\n📋 Product Details (Product id {p_id}):")
+                print("-" * 60)
+                for row in result:
+                    print(f"PRODUCT: Name = {row[1]} | Category = {row[2]} | Description = {row[3]} | Unit Price = {row[4]} | Sku = {row[5]}")
+            
+            connection.commit()
+        except Error as e:
+            print(f"❌Error: searching products {e}")
+        finally:
+            cursor.close()
+            connection.close()
+
+
+    def show_all_products():
+        connection = get_connection()
+        if not connection:
+            print("❌ Connection not found")
+            return
+        try:
+            cursor = connection.cursor()
+            
+            # Check if Product table not empty
+            cursor.execute("SELECT * FROM products")
+            result = cursor.fetchall()
+            if result:
+                print(f"\n📋 SHOW ALL Product:")
+                print("-" * 60)
+                print(result)
+            else:
+                print("❌Product Table is Empty.")
+            connection.commit()
+        
+        except Error as e:
+            print(f"❌Error show all data {e}")
+        finally:
+            cursor.close()
+            connection.close()
+    
+
     
     
 
 
 def Inventory():
-    pass
+    def add(): # nested function add
+        connection = get_connection()
+        if not connection: # check connection
+            return
+        
+        try: # error headling
+            cursor = connection.cursor()
+            i_id = int(input("Enter Inventory id: "))
+
+            # check if Inventory existe in database
+            cursor.execute(
+                    "SELECT inventory_id FROM inventory WHERE inventory_id = %s",(i_id,))
+            if cursor.fetchone():
+                print("❌ Inventory with this id already existe! ")
+                return
+            # input Data
+            p_id = int(input("Enter Product id: "))
+            quantity = input("Enter Quantity: ").strip().title()
+            min_stock = input("Enter Minimum Stock: ").strip().title()
+            last_update = input("Enter Today Date (yyyy-mm-dd): ").strip().title()
+
+
+            # Insert Data 
+            cursor.execute('''INSERT INTO inventory (inventory_id, product_id, quantity, min_stock, last_updated)
+                            VALUES (%s, %s, %s, %s,%s)''',(i_id, p_id, quantity, min_stock, last_update))
+
+            connection.commit()
+            print(f"✅(Inventory id {i_id} Add Successfully.)")
+
+        except Error as e:
+            print(f"❌ Error Adding Inventory details: {e}")
+        finally:
+            cursor.close()
+            connection.close()
+    add()
+Inventory()
 
 def Sales():
     pass
