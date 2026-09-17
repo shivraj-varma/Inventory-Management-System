@@ -73,12 +73,6 @@ Once the script starts, you will be presented with a main menu:
 4.  **Suppliers:** Manage contact information for your vendors.
 5.  **Export:** In each sub-menu, use option `6` to generate a CSV file of that specific data.
 
-## ⚠️ Important Note
-*   **Foreign Keys:** Ensure a Product ID exists in the `products` table before trying to add it to Inventory, Sales, or Suppliers, as these tables rely on `product_id` as a reference.
-*   **Error Handling:** The system includes try-except blocks to handle database connection issues and input errors.
-
-## 🤝 Contributing
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/your-username/your-repo-name/issues).
 
 ---
 
@@ -92,4 +86,4 @@ Contributions, issues, and feature requests are welcome! Feel free to check the 
 └── suppliers.csv      # Exported supplier data (generated)
 ```
 
-**Developed by [Your Name]**
+**Developed by [Shivraj]**
